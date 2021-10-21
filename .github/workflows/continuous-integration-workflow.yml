@@ -1,5 +1,8 @@
 name: Continuous Integration
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -8,30 +11,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Setup .NET 5.0 SDK
-      uses: actions/setup-dotnet@v1
+    - uses: mr-smithers-excellent/docker-build-push@v3
+      name: Build & push Docker image
       with:
-        dotnet-version: 5.0.x
-
-    - name: Dotnet build
-      run: dotnet build --configuration Release
-
-    - name: Dotnet test
-      run: dotnet test
-
-    - name: Setup node
-      uses: actions/setup-node@v1
-      with:
-        node-version: '16'
-
-    - name: Typescript install
-      run: npm ci
-      working-directory: ./DotnetTemplate.Web
-
-    - name: Typescript build
-      run: npm run build 
-      working-directory: ./DotnetTemplate.Web
-
-    - name: Typescript test
-      run: npm run test
-      working-directory: ./DotnetTemplate.Web
+        image: pavitt/workshop8
+        tag: ${{ github.sha }}
+        registry: docker.io
+        dockerfile: Dockerfile
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
