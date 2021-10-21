@@ -1,5 +1,8 @@
 name: Continuous Integration
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -12,7 +15,7 @@ jobs:
       name: Build & push Docker image
       with:
         image: pavitt/workshop8
-        tags: ${{ github.sha }}
+        tag: ${{ github.sha }}
         registry: docker.io
         dockerfile: Dockerfile
         username: ${{ secrets.DOCKER_USERNAME }}
